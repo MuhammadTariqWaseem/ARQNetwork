@@ -1,4 +1,3 @@
-
 package selectiverepeatarq.nodes;
 
 import selectiverepeatarq.traffic.TrafficGenerator;
@@ -8,35 +7,30 @@ module PrimaryNode
 {
     parameters:
         int address;
-        double packetRate @unit(pk/s); // Only if traffic gen is internal
         @display("i=block/routing;b=60,60");
 
     gates:
-        input in[];  // Input gate array (for multiple slaves)
-        output out[]; // Output gate array
+        input inFromGen;  // Traffic generator input
+        input in[3];      // From slaves (ACKs)
+        output out[3];    // To slaves (data frames)
 
     submodules:
-        // ARQ Protocol implementation
         arqProtocol: ARQProtocol {
             parameters:
-                address = default(address);
+                address = default(0);
                 windowSize = default(4);
-                @display("p=91,52");
         }
 
-        // Optional: Internal traffic generator
-        // trafficGen: TrafficGenerator {
-        //    parameters:
-        //        packetRate = default(5pk/s);
-        //        destAddresses = default([1,2,3]);
-        // }
-
     connections:
-        // Internal connections
-        // If using internal traffic generator:
-        // trafficGen.out --> arqProtocol.in;
-
-        // External connections
-        in++ --> arqProtocol.in;
-        arqProtocol.out --> out++;
+        // Traffic generator connection
+        inFromGen --> arqProtocol.inFromGen;
+        
+        // Slave connections (indexed to avoid ambiguity)
+        in[0] --> arqProtocol.in[0];
+        in[1] --> arqProtocol.in[1];
+        in[2] --> arqProtocol.in[2];
+        
+        arqProtocol.out[0] --> out[0];
+        arqProtocol.out[1] --> out[1];
+        arqProtocol.out[2] --> out[2];
 }

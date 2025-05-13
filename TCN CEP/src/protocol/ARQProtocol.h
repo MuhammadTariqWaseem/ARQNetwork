@@ -1,15 +1,15 @@
-// src/protocols/ARQProtocol.h
 #ifndef __ARQPROTOCOL_H__
 #define __ARQPROTOCOL_H__
 
 #include <omnetpp.h>
-#include "src/protocol/messages/ARQFrame_m.h"
-#include "src/protocol/messages/ControlMessage_m.h"
+// The correct paths based on your project structure
+#include "../protocol/messages/ARQFrame_m.h"
+#include "../protocol/messages/ControlMessage_m.h"
 
 using namespace omnetpp;
 
 class ARQProtocol : public cSimpleModule {
-  private:
+private:
     // Window parameters
     int windowSize;
     int nextSeqNum;
@@ -25,11 +25,11 @@ class ARQProtocol : public cSimpleModule {
     // Node identification
     int myAddress;
 
-  protected:
+protected:
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
 
-  private:
+private:
     void sendDataPacket();
     void processAck(ControlMessage *ack);
     void processNak(ControlMessage *nak);

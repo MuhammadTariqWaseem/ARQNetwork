@@ -9,17 +9,19 @@ module SlaveNode
         @display("i=misc/node;b=40,40;bgb=100,104");  // Different icon from primary
 
     gates:
-        input in;  // Single input gate
-        output out;  // Single output gate
+        input in[3];  // Single input gate
+        output out[3];  // Single output gate
+        input inForm;
 
     submodules:
         arqProtocol: ARQProtocol {
             parameters:
-                address = default(address);
+                address = default(0);
                 windowSize = default(1);  // Slaves typically need smaller windows
         }
 
     connections:
-        in --> arqProtocol.in;
-        arqProtocol.out --> out;
+        inForm --> arqProtocol.inFromGen;
+        in[address] --> arqProtocol.in[address];
+        arqProtocol.out[address] --> out[address];
 }

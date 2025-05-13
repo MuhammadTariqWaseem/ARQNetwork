@@ -1,11 +1,11 @@
 #include "ARQProtocol.h"
 
-#include "messages/ControlMessage.msg"
-#include "messages/ARQFrame.msg"
-
 Define_Module(ARQProtocol);
 
 void ARQProtocol::initialize() {
+    windowSize = par("windowSize").intValue();
+    nextSeqNum = 0;
+    lastAckReceived = -1;
     myAddress = par("address").intValue();
     
     if (getParentModule()->findSubmodule("trafficGen") != -1) {
@@ -69,7 +69,9 @@ void ARQProtocol::sendDataPacket() {
         // Set payload (simplified)
         char payload[1000];
         sprintf(payload, "Data packet %d from node %d", nextSeqNum, myAddress);
-        frame->setPayload(payload);
+        // Fix: Check what parameters setPayload requires from ARQFrame_m.h
+        // Assuming it takes string length and first character:
+        frame->setPayload(strlen(payload), payload[0]);
         
         // Store in buffer
         sentBuffer[nextSeqNum] = frame->dup();

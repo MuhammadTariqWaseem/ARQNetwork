@@ -1,19 +1,11 @@
 package selectiverepeatarq.traffic;
 
-simple TrafficGenerator
-{
+simple TrafficGenerator {
     parameters:
-        double packetRate @unit(pk/s);
-        xml destAddresses;
+        double packetRate = default(exponential(5pk/s));  // Note: unit added
+        string destAddresses = default("1,2,3");
         @display("i=block/source");
-        
+    
     gates:
         output out;
-        
-    @statistic[packetSent](
-        title="Packets sent";
-        source=count;
-        record=vector,stats;
-        interpolationmode=none;
-    );
 }

@@ -1,5 +1,5 @@
 #include <omnetpp.h>
-#include "ARQFrame.msg"
+#include "../protocol/messages/ARQFrame_m.h"
 
 using namespace omnetpp;
 
@@ -43,9 +43,9 @@ void TrafficGenerator::generateAndSendPacket()
     ARQFrame *frame = new ARQFrame();
 
     // Set destination (random from configured addresses)
-    cArray& addresses = par("destAddresses");
-    int destIndex = intuniform(0, addresses.size()-1);
-    frame->setDestAddress(addresses[destIndex].intValue());
+    cValueArray *addresses = check_and_cast<cValueArray*>(par("destAddresses").objectValue());
+    int destIndex = intuniform(0, addresses->size()-1);
+    frame->setDestAddress(addresses->get(destIndex).intValue());
 
     // Set source (assuming 0 for primary)
     frame->setSrcAddress(0);
@@ -56,7 +56,7 @@ void TrafficGenerator::generateAndSendPacket()
     // Set payload
     char payload[1000];
     sprintf(payload, "Payload generated at %s", simTime().str().c_str());
-    frame->setPayload(payload);
+    frame->setPayload(1000, *payload);  // Note the dereferencing of payload
 
     // Send the frame
     send(frame, "out");
